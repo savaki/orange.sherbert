@@ -8,7 +8,7 @@ fi
 
 set -eu
 
-AMI="ami-c8cf3ba0"
+AMI="ami-fb8e9292"
 INSTANCE_TYPE="m3.medium"
 TARGET="target"
 
@@ -17,13 +17,17 @@ mkdir -p ${TARGET}
 
 aws ec2 create-key-pair --key-name ${NAME} | tee -a ${TARGET}/${NAME}.json
 cat ${TARGET}/${NAME}.json | jq -r '.KeyMaterial' > ${TARGET}/${NAME}.pem
+chmod 600 ${TARGET}/${NAME}.pem
+
+`dirname $0`/create_user_data.sh ${NAME}
 
 # create the launch configuration
 aws autoscaling create-launch-configuration \
 	--key-name ${NAME} \
 	--launch-configuration-name ${NAME}-launch-config \
 	--image-id ${AMI} \
-	--instance-type ${INSTANCE_TYPE} 
+	--instance-type ${INSTANCE_TYPE} \
+	--user-data file://${TARGET}/${NAME}.data
 
 # --user-data {filename}
 
