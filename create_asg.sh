@@ -9,8 +9,9 @@ fi
 set -eu
 
 AMI="ami-fb8e9292"
-INSTANCE_TYPE="m3.medium"
+INSTANCE_TYPE="m3.xlarge"
 TARGET="target"
+REGION="us-east-1b"
 
 # create target container
 mkdir -p ${TARGET}
@@ -38,8 +39,8 @@ aws autoscaling describe-launch-configurations
 aws autoscaling create-auto-scaling-group \
 	--auto-scaling-group-name ${NAME}-asg \
 	--launch-configuration-name ${NAME}-launch-config \
-	--min-size 1 \
-	--max-size 1 \
-	--availability-zones us-east-1d
+	--min-size 3 \
+	--max-size 3 \
+	--availability-zones ${REGION}
 
 
